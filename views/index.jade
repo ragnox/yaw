@@ -1,0 +1,11 @@
+extends layouts/default
+
+block content
+
+  body(ng-app='yawApp')
+
+
+    div(ng-controller="AppCtrl")
+
+      Hi {{name}}
+      p The current time is {{time}}
