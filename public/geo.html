@@ -31,13 +31,13 @@
             .attr("width", width)
             .attr("height", height);
 
-    var context = canvas.node().getContext("2d");
+    var context = canvas.node().getContext("3d");
 
     var path = d3.geo.path()
             .projection(projection)
             .context(context);
 
-    d3.json("/mbostock/raw/4090846/world-110m.json", function (error, topo) {
+    d3.json("/json/world-110m.json", function (error, topo) {
         var land = topojson.feature(topo, topo.objects.land),
                 borders = topojson.mesh(topo, topo.objects.countries, function (a, b) {
                     return a !== b;

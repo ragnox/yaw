@@ -4,8 +4,17 @@ block content
 
   body(ng-app='yawApp')
 
+    hi there
 
     div(ng-controller="AppCtrl")
+      map
+        div {{country}}
+        div.list
+          ul
+            li(ng-repeat="c in cs")
+              div {{c.name}}
 
-      Hi {{name}}
-      p The current time is {{time}}
+//          ul
+//            li(ng-repeat="c in countries")
+//              div {{c.name}}
+
