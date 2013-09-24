@@ -7,8 +7,9 @@ map {
 .list {
     position: absolute;
 
-    top: 2em;
-    right: 4em;
+    font-size: 12px;
+    top: 1em;
+    right: 1em;
 }
 .list ul {
     background: #ffffff;
@@ -16,8 +17,8 @@ map {
     border-radius: 5px;
     padding: 0.3em;
     margin: 0;
-    height: 20em;
-    width: 20em;
+    height: 10em;
+    width: 6em;
     overflow-y: auto;
 }
 .list li {

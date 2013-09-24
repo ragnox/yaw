@@ -3,7 +3,7 @@
 /* Directives */
 
 
-angular.module('yawApp.directives', []).directive('map', function ($location) {
+angular.module('yawApp.directives', []).directive('map', function ($location,socket) {
 
     return {
         restrict: 'E',
@@ -12,6 +12,33 @@ angular.module('yawApp.directives', []).directive('map', function ($location) {
             grouped: '='
         },
         link: function (scope, element, attrs) {
+
+            socket.on("cs:update", function(d,k,m) {
+                console.log('cs:updated');
+                console.log(d);
+
+
+                if(!angular.equals(scope.cs, d)) {
+                    scope.cs = d;
+                }
+
+            });
+
+            scope.$watch("cs", function (newV, oldV) {
+
+                    if(newV == null || angular.isUndefined(newV)) {
+                        return;
+                    }
+
+                    console.log('emit' + newV);
+                    socket.emit("cs:update", scope.cs, function(a,b) {
+
+                        console.log('cs:update emitted');
+                        console.log(a);
+                        console.log(b);
+                    });
+                }, true);
+
 
 // The SVG container
             var width  = 960,
@@ -42,22 +69,31 @@ angular.module('yawApp.directives', []).directive('map', function ($location) {
             };
 
             var x, y, s,m0,o0,m1,o1;
-            var drag = d3.behavior.drag()
-                .on("dragstart", function() {
+            var dragstart, drag, ds;
+
+
+            var dragBehavior = d3.behavior.drag()
+                .on("dragstart", dragstart = function() {
+                    var m = d3.mouse(this);
                     var proj = projection.rotate();
-                    m0 = [d3.event.sourceEvent.pageX, d3.event.sourceEvent.pageY];
+                    m0 = [m[0] || d3.event.sourceEvent.pageX, m[1] || d3.event.sourceEvent.pageY];
                     o0 = [-proj[0],-proj[1]];
                 })
-                .on("drag", function() {
+                .on("drag", drag = function() {
+                    var m = d3.mouse(this);
                     if (m0) {
-                        var m1 = [d3.event.sourceEvent.pageX, d3.event.sourceEvent.pageY],
+                        var m1 = [m[0] || d3.event.sourceEvent.pageX, m[1] || d3.event.sourceEvent.pageY],
                             o1 = [o0[0] + (m0[0] - m1[0]), o0[1] + (m1[1] - m0[1])];
                         projection.rotate([-o1[0], -o1[1]]);
                     }
 
                     // Update the map
 //                    path = d3.geo.path().projection(projection);
-                    d3.selectAll("path").attr("d", path);
+                    try {
+                        d3.selectAll("path").attr("d", path);
+                    } catch(e) {
+//                        console.log(e);
+                    }
                 });
 
             var svg = d3.select("body").append("svg")
@@ -65,14 +101,15 @@ angular.module('yawApp.directives', []).directive('map', function ($location) {
                     var p = d3.mouse(this);
                     var e = d3.event;
 
-
-                    if(e.altKey) {
-
-                        var r = projection.rotate();
-                        projection.rotate([sx(p[0]),sy(p[1])]);
-                        svg.selectAll("path").attr("d", path);
+                    if(e.metaKey) {
+                        if(ds) {
+                            drag.apply(this);
+                        } else {
+                            ds = true;
+                            dragstart.apply(this);
+                        }
                     } else {
-
+                        ds = false;
                         x=p[0];
                         y=p[1];
                     }
@@ -80,7 +117,7 @@ angular.module('yawApp.directives', []).directive('map', function ($location) {
                 .attr("width", width)
                 .attr("height", height)
                 .call(d3.behavior.zoom().on("zoom", pan))
-                .call(drag)
+                .call(dragBehavior)
                 .append('g');
 
             var border = svg.append("path")
@@ -161,8 +198,7 @@ angular.module('yawApp.directives', []).directive('map', function ($location) {
                         if(d3.event.shiftKey) {
                             scope.cs[d.name] = d;
 
-                            name = Object.keys(scope.cs)[0];
-                            country = scope.cs[name];
+                            name = d.name;
 
                             var p = [];
                             angular.forEach(scope.cs, function(c) {
