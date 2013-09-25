@@ -1,14 +1,37 @@
 /*
  * Serve content over a socket
  */
+_ = require('underscore');
+
+var client = 0;
+var scope = {};
+scope.io = {};
+scope.io.c = {};
 
 module.exports = function (socket) {
-    socket.emit('send:name', {
-        name: 'Bob'
+
+    var id = client++;
+
+    scope.io.c[id] = {
+        selection: {id:id}
+    };
+
+
+    socket.emit('client:id', {
+        client: id
     });
-    socket.on("cs:update", function(d,f,m) {
+
+    socket.emit('io', scope.io);
+
+    socket.on("io", function(d,f,m) {
+        console.log("emit io");
         console.log(d);
-        socket.broadcast.emit('cs:update', d);
+        _.extend(scope.io, d);
+        socket.emit('io', scope.io);
+    });
+
+    socket.on('disconnect', function() {
+//         delete scope.io.c[id];
     });
 
     setInterval(function () {

@@ -13,30 +13,64 @@ angular.module('yawApp.directives', []).directive('map', function ($location,soc
         },
         link: function (scope, element, attrs) {
 
-            socket.on("cs:update", function(d,k,m) {
-                console.log('cs:updated');
-                console.log(d);
+            function isSelected(d) {
+
+                var s=false;
+                angular.forEach(scope.io.c, function(c, i) {
+                    if(c && c.selection[d.name]) {
+                        s=i;
+                    }
+                });
+
+                return s;
+            }
+
+            function drawCountries() {
 
 
-                if(!angular.equals(scope.cs, d)) {
-                    scope.cs = d;
-                }
+                d3.selectAll("path.country").each(function(d,i) {
+                    var i = isSelected(d);
+                    var c = i ? color(i*2) : "#222";
+                    d.style("fill", c);
+                });
+            }
+
+
+            var io = scope.io = {};
+            var client;
+
+            socket.on('client:id', function (d, v) {
+
+                client = scope.client = d.client;
 
             });
+            socket.on("io", function(d,k,m) {
 
-            scope.$watch("cs", function (newV, oldV) {
+                if(!angular.equals(scope.io, d)) {
 
-                    if(newV == null || angular.isUndefined(newV)) {
+                    scope.updated = true;
+                    scope.io = d;
+                    console.log('io:updated');
+                    console.log(d);
+
+                    drawCountries();
+
+                }
+            });
+
+            scope.$watch('io', function (newV, oldV) {
+
+
+                    if(scope.updated || newV == null || angular.isUndefined(newV)) {
+                        scope.updated = false;
                         return;
                     }
 
-                    console.log('emit' + newV);
-                    socket.emit("cs:update", scope.cs, function(a,b) {
+                    console.log('emit io');
+                    console.log(scope.client);
 
-                        console.log('cs:update emitted');
-                        console.log(a);
-                        console.log(b);
-                    });
+                    drawCountries();
+                    socket.emit("io", scope.io);
                 }, true);
 
 
@@ -140,7 +174,7 @@ angular.module('yawApp.directives', []).directive('map', function ($location,soc
                     var i = -1,
                     n = countries.length;
 
-//                scope.countries = countries;
+                scope.countries = countries;
 
                 countries.forEach(function(d) {
                     var tryit = names.filter(function(n) { return d.id == n.id; })[0];
@@ -161,57 +195,44 @@ angular.module('yawApp.directives', []).directive('map', function ($location,soc
                     .attr("title", function(d,i) { return d.name; })
                     .attr("d", path)
                     .style("stroke", function(d, i) {
-                        return color(i);
+                        return color(i*3);
                     })
                     .on("mouseenter", function(d,i) {
                         d3.select(this).style("opacity", "0.2");
 //                        console.log(d);
                     })
                     .on("mouseleave", function(d,i) {
-                        if(scope.cs[d.name]) {
 
-                            d3.select(this).style("opacity", "0.1");
+                        d3.select(this).style("opacity", "1.0");
+
+                        if(isSelected(d)) {
+
+//                            d3.select(this).style("opacity", "0.1");
                         } else {
 
-                            d3.select(this).style("opacity", "1.0");
+
                         }
 //                        console.log(e);
                     })
                 ;
 
-                function polygon(ring) {
-                    var polygon = [ring];
-                    ring.push(ring[0]); // add closing coordinate
-                    if (d3.geo.area({type: "Polygon", coordinates: polygon}) > 2 * Math.PI) ring.reverse(); // fix winding order
-                    return polygon;
+                function getSelection() {
+                    return scope.io.c[scope.client].selection;
                 }
-                //Show/hide tooltip
-                scope.cs = {};
-                scope.p = [];
+
                 country
                     .on("mousemove", function(d,i) {
 
                         if(d3.event.ctrlKey) {
-                            delete scope.cs[d.name];
+
+                            delete getSelection()[d.name];
 
                         }
                         if(d3.event.shiftKey) {
-                            scope.cs[d.name] = d;
 
-                            name = d.name;
+                            // select country
+                            getSelection()[d.name] = {id: d.name};
 
-                            var p = [];
-                            angular.forEach(scope.cs, function(c) {
-                                if(c.name == d.name) {
-                                    country = c;
-                                    p[c.id]=1;
-                                }
-                            });
-
-                            var selectionBoundary = topojson.mesh(world, p, function(a, b) { return a !== b; }),
-                            selection = {type: "MultiPolygon", coordinates: selectionBoundary.coordinates.map(polygon)};
-
-                            border.attr("d", path(selection));
                         }
                         else {
 

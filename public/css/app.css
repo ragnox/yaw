@@ -13,16 +13,22 @@ map {
 }
 .list ul {
     background: #ffffff;
-    border: 1px solid #aaa;
-    border-radius: 5px;
+    border: 1px solid #aad;
+    border-radius: 2px;
     padding: 0.3em;
-    margin: 0;
-    height: 10em;
+    margin: 0.4em;
+    max-height: 10em;
     width: 6em;
+    text-align: center;
     overflow-y: auto;
 }
 .list li {
     list-style: none;
+    border-bottom: 1px solid #eee;
+}
+.selected {
+    stroke: #ff0;
+    stroke-width: 5px;
 }
 .country {
     /*fill: #ccc;*/

@@ -4,17 +4,13 @@ block content
 
   body(ng-app='yawApp')
 
-    hi there
+    h1 {{client}}
 
     div(ng-controller="AppCtrl")
       map
         div {{country}}
         div.list
-          ul
-            li(ng-repeat="c in cs")
-              div {{c.name}}
-
-//          ul
-//            li(ng-repeat="c in countries")
-//              div {{c.name}}
+              ul(ng-repeat="client in io.c track by $index")
+                li
+                  div(ng-repeat="c in client.selection") {{c.id}}
 
