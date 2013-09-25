@@ -686,9 +686,7 @@ angular.module('yawApp.directives', []).directive('map', function ($location,soc
                 ];
                 var l = [];
                 angular.forEach(c, function(c, i) {
-
                     l.push(c.hex);
-
                 });
 
                 var c = l[cid % l.length];
@@ -778,8 +776,8 @@ angular.module('yawApp.directives', []).directive('map', function ($location,soc
 
 
 // The SVG container
-            var width  = 960,
-                height = 500;
+            var width  = screen.width,
+                height = screen.height;
 
             var color = d3.scale.category20c();
 
