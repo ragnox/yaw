@@ -8,10 +8,15 @@ block content
 
     div(ng-controller="AppCtrl")
       map
-        div {{country}}
+
         div.list
-              ul(ng-repeat="client in io.c track by $index")
-                li
-                  a(class="clear" ng-click="clearClient(client.id)") clear
-                  div(ng-repeat="c in client.selection") {{c.id}}
+              a(class="clear" ng-click="clearClients()")  clear
+              span {{country}}
+              ul( )
+                li(ng-click="setClient(c.id)" ng-repeat="c in io.c track by $index" class="{{(c.id == client) ? 'self' : ''}}")
+                  span(style="color: {{getColor(c.id)}}") c{{c.id}}
+                  a(class="clear" ng-click="clearClient(c.id)")  clear
+
+
+                  div(ng-repeat="country in c.selection") {{country.id}}
 
