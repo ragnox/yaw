@@ -15,7 +15,8 @@ map {
     position: absolute;
     border-radius: 4px;
 
-    font-size: 12px;
+    font: Helvetica;
+    font-size: 14px;
     top: 1em;
     right: 1em;
 
