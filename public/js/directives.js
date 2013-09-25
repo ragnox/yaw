@@ -28,10 +28,10 @@ angular.module('yawApp.directives', []).directive('map', function ($location,soc
             function drawCountries() {
 
 
-                d3.selectAll("path.country").each(function(d,i) {
+                d3.selectAll("path.country").each(function(d,i,v,b) {
                     var i = isSelected(d);
                     var c = i ? color(i*2) : "#222";
-                    d.style("fill", c);
+                    d3.select(this).style("fill", c);
                 });
             }
 
@@ -39,12 +39,16 @@ angular.module('yawApp.directives', []).directive('map', function ($location,soc
             var io = scope.io = {};
             var client;
 
+            scope.clearClient = function(client) {
+                delete scope.io.c[client];
+            }
+
             socket.on('client:id', function (d, v) {
 
                 client = scope.client = d.client;
 
             });
-            socket.on("io", function(d,k,m) {
+            socket.on("update", function(d,k,m) {
 
                 if(!angular.equals(scope.io, d)) {
 
@@ -217,6 +221,9 @@ angular.module('yawApp.directives', []).directive('map', function ($location,soc
                 ;
 
                 function getSelection() {
+                    if(!scope.io.c[scope.client]) {
+                        scope.io.c[scope.client] = {id:scope.client, selection:{}};
+                    }
                     return scope.io.c[scope.client].selection;
                 }
 

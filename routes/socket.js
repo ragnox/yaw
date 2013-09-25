@@ -13,6 +13,7 @@ module.exports = function (socket) {
     var id = client++;
 
     scope.io.c[id] = {
+        id:id,
         selection: {id:id}
     };
 
@@ -21,13 +22,13 @@ module.exports = function (socket) {
         client: id
     });
 
-    socket.emit('io', scope.io);
+    socket.emit('update', scope.io);
 
     socket.on("io", function(d,f,m) {
         console.log("emit io");
         console.log(d);
         _.extend(scope.io, d);
-        socket.emit('io', scope.io);
+        socket.broadcast.emit('update', scope.io);
     });
 
     socket.on('disconnect', function() {

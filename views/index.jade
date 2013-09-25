@@ -12,5 +12,6 @@ block content
         div.list
               ul(ng-repeat="client in io.c track by $index")
                 li
+                  a(class="clear" ng-click="clearClient(client.id)") clear
                   div(ng-repeat="c in client.selection") {{c.id}}
 
