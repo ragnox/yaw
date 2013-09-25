@@ -9,6 +9,9 @@ block content
     div(ng-controller="AppCtrl")
       map
         div {{country}}
+        div.info
+          span hide
+          pre ctrl - select, shift - pan
         div.list
               ul(ng-repeat="client in io.c track by $index")
                 li
