@@ -56,13 +56,20 @@ map {
     stroke-width: 5px;
 }
 .country {
-    /*fill: #ccc;*/
-    stroke: #fff;
+    opacity: 0.8;
+    stroke: #eee;
     stroke-width: 1px;
     stroke-linejoin: round;
 }
+
+.country.active {
+    opacity: 1;
+    stroke: #ddd;
+    stroke-width: 1px;
+
+}
 .country:hover {
-    fill: #fff;
+    opacity: 0.4;
 }
 
 .hidden {
