@@ -34,6 +34,10 @@ map {
 .list li.self {
     background: none repeat scroll 0 0 #888;
     color: #ffffff;
+
+}
+.list li.self:hover {
+    border: 2px solid #888;
 }
 .list li:hover {
     border: 2px solid #eee;
@@ -52,7 +56,7 @@ map {
     list-style: none;
 }
 .list li .active {
-    color: #66f;
+    color: #003399;
 }
 .country {
     opacity: 0.8;
