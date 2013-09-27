@@ -3,7 +3,7 @@
 /* Directives */
 
 
-angular.module('yawApp.directives', []).directive('map', function ($location,socket) {
+angular.module('yawApp.directives', ['yawApp.services']).directive('map', function ($location,$rootScope,socket,util) {
 
     return {
         restrict: 'E',
@@ -748,10 +748,27 @@ angular.module('yawApp.directives', []).directive('map', function ($location,soc
 
                 if(!angular.equals(scope.io, d)) {
 
+
                     scope.updated = true;
-                    scope.io = d;
+                    var io = _.clone(scope.io);
+                    _.extend(io, d);
+
+
+                    _.each(io.c, function(c,i) {
+                        if(c == null) {
+                            delete d.c[i];
+                        }
+                        _.each(c.selection, function(s,i) {
+                            if(s == null) {
+                                delete c.selection[i];
+                            }
+                        });
+                    });
+                    scope.io = io;
+
+                    $rootScope.$$phase || scope.$apply();
                     console.log('io:updated');
-                    console.log(d);
+                    console.log(io);
 
                     drawCountries();
 
@@ -764,13 +781,18 @@ angular.module('yawApp.directives', []).directive('map', function ($location,soc
             scope.$watch('io', function (newV, oldV) {
 
 
-                    if(scope.updated || newV == null || angular.isUndefined(newV)) {
-                        scope.updated = false;
-                        return;
-                    }
+                if(scope.updated || newV == null || angular.isUndefined(newV)) {
+                    scope.updated = false;
+                    return;
+                }
 
-                    drawCountries();
-                    socket.emit("io", scope.io);
+                var diff = util.difference(oldV, newV);
+//                console.log('diff');
+//                console.log(diff);
+
+
+                drawCountries();
+                socket.emit("io", newV);
                 }, true);
 
 

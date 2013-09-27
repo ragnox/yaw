@@ -12,6 +12,7 @@ module.exports = function (socket) {
 
     var id = client++;
 
+    scope.io.c = scope.io.c[id] || {};
     scope.io.c[id] = {
         id:id,
         selection: {id:id}
@@ -27,8 +28,10 @@ module.exports = function (socket) {
     socket.on("io", function(d,f,m) {
         console.log("emit io");
         console.log(d);
-        _.extend(scope.io, d);
-        socket.broadcast.emit('update', scope.io);
+
+        scope.io = d;
+//        _.extend(scope.io, d);
+        socket.broadcast.emit('update', d);
     });
 
     socket.on('disconnect', function() {
