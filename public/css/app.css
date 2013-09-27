@@ -51,15 +51,15 @@ map {
 .list li {
     list-style: none;
 }
-.selected {
-    stroke: #ff0;
-    stroke-width: 5px;
+.list li .active {
+    color: #66f;
 }
 .country {
     opacity: 0.8;
-    stroke: #eee;
+    stroke: #fff;
     stroke-width: 1px;
     stroke-linejoin: round;
+    fill: #eee;
 }
 
 .country.active {

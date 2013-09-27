@@ -714,12 +714,10 @@ angular.module('yawApp.directives', []).directive('map', function ($location,soc
                     var c = d3.select(this);
 
                     if(i) {
-
                         c.style("fill", getColor(i));
                         c.classed("active", i == scope.client);
 
                     } else {
-                        c.style("fill", "#fafafa");
                         c.classed("active", false);
                     }
 
@@ -908,8 +906,6 @@ angular.module('yawApp.directives', []).directive('map', function ($location,soc
                             .attr("style", "left: " + (m[0] + 5) + "px; top: "+ (m[1] - 5) + "px;")
                             .html(d.name);
 
-//                        d3.select(this).style("opacity", "0.4");
-//                        console.log(d);
                     })
                     .on("mouseleave", function(d,i) {
 
