@@ -12,7 +12,7 @@ module.exports = function (socket) {
 
     var id = client++;
 
-    scope.io.c = scope.io.c[id] || {};
+    scope.io.c = scope.io.c || {};
     scope.io.c[id] = {
         id:id,
         selection: {id:id}

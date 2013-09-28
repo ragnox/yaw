@@ -718,9 +718,11 @@ angular.module('yawApp.directives', ['yawApp.services']).directive('map', functi
                         c.classed("active", i == scope.client);
 
                     } else {
+                        c.style("fill", "#ddd");
                         c.classed("active", false);
                     }
 
+//                    d3.selectAll("path").attr("d", path);
                 });
             }
 
@@ -750,8 +752,7 @@ angular.module('yawApp.directives', ['yawApp.services']).directive('map', functi
 
 
                     scope.updated = true;
-                    var io = _.clone(scope.io);
-                    _.extend(io, d);
+                    var io = d;
 
 
                     _.each(io.c, function(c,i) {
@@ -764,11 +765,11 @@ angular.module('yawApp.directives', ['yawApp.services']).directive('map', functi
                             }
                         });
                     });
-                    scope.io = io;
+                    scope.io = d;
 
                     $rootScope.$$phase || scope.$apply();
                     console.log('io:updated');
-                    console.log(io);
+                    console.log(d);
 
                     drawCountries();
 
@@ -781,18 +782,13 @@ angular.module('yawApp.directives', ['yawApp.services']).directive('map', functi
             scope.$watch('io', function (newV, oldV) {
 
 
-                if(scope.updated || newV == null || angular.isUndefined(newV)) {
+                if(scope.updated) {
                     scope.updated = false;
                     return;
                 }
 
-                var diff = util.difference(oldV, newV);
-//                console.log('diff');
-//                console.log(diff);
-
-
                 drawCountries();
-                socket.emit("io", newV);
+                socket.emit("io", scope.io);
                 }, true);
 
 
