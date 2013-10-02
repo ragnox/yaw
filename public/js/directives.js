@@ -3,7 +3,7 @@
 /* Directives */
 
 
-angular.module('yawApp.directives', []).directive('map', function ($location,socket) {
+angular.module('yawApp.directives', ['yawApp.services']).directive('map', function ($location,$rootScope,socket,util) {
 
     return {
         restrict: 'E',
@@ -714,14 +714,15 @@ angular.module('yawApp.directives', []).directive('map', function ($location,soc
                     var c = d3.select(this);
 
                     if(i) {
-                        c.classed("selected");
                         c.style("fill", getColor(i));
+                        c.classed("active", i == scope.client);
 
                     } else {
-                        c.style("fill", "#fdfdfd");
-                        c.style("opacity", 0.8);
+                        c.style("fill", "#ddd");
+                        c.classed("active", false);
                     }
 
+//                    d3.selectAll("path").attr("d", path);
                 });
             }
 
@@ -749,8 +750,24 @@ angular.module('yawApp.directives', []).directive('map', function ($location,soc
 
                 if(!angular.equals(scope.io, d)) {
 
+
                     scope.updated = true;
+                    var io = d;
+
+
+                    _.each(io.c, function(c,i) {
+                        if(c == null) {
+                            delete d.c[i];
+                        }
+                        _.each(c.selection, function(s,i) {
+                            if(s == null) {
+                                delete c.selection[i];
+                            }
+                        });
+                    });
                     scope.io = d;
+
+                    $rootScope.$$phase || scope.$apply();
                     console.log('io:updated');
                     console.log(d);
 
@@ -759,19 +776,19 @@ angular.module('yawApp.directives', []).directive('map', function ($location,soc
                 }
             });
 
+            scope.$watch('client', function (newV, oldV) {
+                drawCountries();
+            });
             scope.$watch('io', function (newV, oldV) {
 
 
-                    if(scope.updated || newV == null || angular.isUndefined(newV)) {
-                        scope.updated = false;
-                        return;
-                    }
+                if(scope.updated) {
+                    scope.updated = false;
+                    return;
+                }
 
-                    console.log('emit io');
-                    console.log(scope.client);
-
-                    drawCountries();
-                    socket.emit("io", scope.io);
+                drawCountries();
+                socket.emit("io", scope.io);
                 }, true);
 
 
@@ -895,9 +912,9 @@ angular.module('yawApp.directives', []).directive('map', function ($location,soc
                     .attr("class", "country")
                     .attr("title", function(d,i) { return d.name; })
                     .attr("d", path)
-                    .style("stroke", function(d, i) {
-                        return "#ddd";
-                    })
+//                    .style("stroke", function(d, i) {
+//                        return "#ddd";
+//                    })
                     .on("mouseenter", function(d,i) {
 
                         var m = d3.mouse(this);
@@ -907,12 +924,10 @@ angular.module('yawApp.directives', []).directive('map', function ($location,soc
                             .attr("style", "left: " + (m[0] + 5) + "px; top: "+ (m[1] - 5) + "px;")
                             .html(d.name);
 
-                        d3.select(this).style("opacity", "0.4");
-//                        console.log(d);
                     })
                     .on("mouseleave", function(d,i) {
 
-                        d3.select(this).style("opacity", "1.0");
+//                        d3.select(this).style("opacity", "1.0");
 
                         if(isSelected(d)) {
 
@@ -964,6 +979,9 @@ angular.module('yawApp.directives', []).directive('map', function ($location,soc
                             select(d);
                         }
                         d3.event.stopPropagation();
+                    } else {
+                        scope.client = isSelected(d);
+                        scope.$apply();
                     }
 
 

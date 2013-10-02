@@ -34,6 +34,10 @@ map {
 .list li.self {
     background: none repeat scroll 0 0 #888;
     color: #ffffff;
+
+}
+.list li.self:hover {
+    border: 2px solid #888;
 }
 .list li:hover {
     border: 2px solid #eee;
@@ -51,18 +55,25 @@ map {
 .list li {
     list-style: none;
 }
-.selected {
-    stroke: #ff0;
-    stroke-width: 5px;
+.list li .active {
+    color: #003399;
 }
 .country {
-    /*fill: #ccc;*/
+    opacity: 0.8;
     stroke: #fff;
     stroke-width: 1px;
     stroke-linejoin: round;
+    fill: #eee;
+}
+
+.country.active {
+    opacity: 1;
+    stroke: #ddd;
+    stroke-width: 1px;
+
 }
 .country:hover {
-    fill: #fff;
+    opacity: 0.4;
 }
 
 .hidden {
@@ -94,6 +105,6 @@ a.clear {
 .point {
     fill: #000;
     stroke: #fff;
-    stroke-width: .5px;
+    stroke-width: 1px;
     opacity: 0.5;
 }
