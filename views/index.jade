@@ -10,9 +10,11 @@ block content
       map
         div.list
 
-          pre shift-pan, ctrl-select
-          a(class="clear" ng-click="clearClients()")  clear
-          span {{country}}
+          div.head
+              pre shift-pan, ctrl-select
+              a(class="clear" ng-click="clearClients()")  clear
+              span {{country}}
+
           ul( )
             li(ng-click="setClient(c.id)" ng-repeat="c in io.c track by $index" class="{{(c.id == client) ? 'self' : ''}}")
               span(style="color: {{getColor(c.id)}}") c{{c.id}}
@@ -20,5 +22,5 @@ block content
 
 
               div(ng-repeat="ci in c.selection" ng-animate="'animate'")
-                div(class="{{ci.id == country ? 'active' : ''}}") {{ci.id}}
+                  div.item(ng-mouseover="showCountry(countries[ci.id])" class="{{ci.id == country ? 'active' : ''}}") {{ci.id}}
 

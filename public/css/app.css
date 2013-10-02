@@ -24,17 +24,22 @@ map {
     width: 13em;
     overflow-y: auto;
     padding: 1em 0.2em;
+    cursor: default;
+}
+.list .head {
+    height: 4em;
 }
 .list ul {
 
     padding: 0.3em;
     margin: 0.4em;
 }
-
+.list li .active {
+    color: #003399;
+}
 .list li.self {
     background: none repeat scroll 0 0 #888;
     color: #ffffff;
-
 }
 .list li.self:hover {
     border: 2px solid #888;
@@ -55,8 +60,16 @@ map {
 .list li {
     list-style: none;
 }
-.list li .active {
-    color: #003399;
+.list .item:hover {
+    color: darkorange;
+}
+.list .item{
+
+}
+.active {
+    stroke: #ff0;
+    stroke-width: 5px;
+    opacity: 0.4;
 }
 .country {
     opacity: 0.8;
