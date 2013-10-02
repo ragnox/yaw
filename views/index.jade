@@ -19,6 +19,6 @@ block content
               a(class="clear" ng-click="clearClient(c.id)")  clear
 
 
-              div(ng-repeat="ci in c.selection")
+              div(ng-repeat="ci in c.selection" ng-animate="'animate'")
                 div(class="{{ci.id == country ? 'active' : ''}}") {{ci.id}}
 
