@@ -8,17 +8,12 @@ block content
 
     div(ng-controller="AppCtrl")
       map
+        div {{country}}
+        div.info
+          span hide
+          pre ctrl - select, shift - pan
         div.list
-
-          pre shift-pan, ctrl-select
-          a(class="clear" ng-click="clearClients()")  clear
-          span {{country}}
-          ul( )
-            li(ng-click="setClient(c.id)" ng-repeat="c in io.c track by $index" class="{{(c.id == client) ? 'self' : ''}}")
-              span(style="color: {{getColor(c.id)}}") c{{c.id}}
-              a(class="clear" ng-click="clearClient(c.id)")  clear
-
-
-              div(ng-repeat="ci in c.selection" ng-animate="'animate'")
-                div(class="item {{ci.id == country ? 'active' : ''}}") {{ci.id}}
+              ul(ng-repeat="client in io.c track by $index")
+                li
+                  div(ng-repeat="c in client.selection") {{c.id}}
 
