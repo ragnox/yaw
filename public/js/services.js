@@ -10,8 +10,8 @@ angular.module('yawApp.services', []).
 
     factory('util', function ($rootScope) {
         return {
-            difference: function(o1, o2) {
-                var difference = function(o1, o2) {
+            diff: function(o1, o2) {
+                return function(o1, o2) {
                     var k, kDiff,
                         diff = {};
                     for (k in o1) {
@@ -26,7 +26,7 @@ angular.module('yawApp.services', []).
                             }
                         } else if (_.isArray(o2[k])) {
 //                            diff[k] = o2[k];
-                        } else if (kDiff = difference(o1[k], o2[k])) {
+                        } else if (kDiff = this(o1[k], o2[k])) {
                             diff[k] = kDiff;
 
                             diff.id = o1.id;
@@ -44,7 +44,6 @@ angular.module('yawApp.services', []).
                     }
                     return false;
                 };
-                return difference(o1, o2);
             }
         };
     }).

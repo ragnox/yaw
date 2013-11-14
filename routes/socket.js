@@ -3,15 +3,34 @@
  */
 _ = require('underscore');
 
+var fs = require("fs");
+
+
+// And then, to read it...
+
+try {
+    scope = require("./scope.json");
+} catch(e) {
+
+}
+
+
 var client = 0;
-var scope = {};
-scope.io = {};
-scope.io.c = {};
+
 
 module.exports = function (socket) {
 
     var id = client++;
 
+    if(!typeof scope != 'object') {
+        scope = {};
+        socket.emit("io", scope);
+    }
+
+    if(!scope.io) {
+        scope.io = {};
+        scope.io.c = {};
+    }
     scope.io.c = scope.io.c || {};
     scope.io.c[id] = {
         id:id,
@@ -31,6 +50,12 @@ module.exports = function (socket) {
 
         scope.io = d;
 //        _.extend(scope.io, d);
+
+
+        fs.writeFile( "scope.json", JSON.stringify( scope ), "utf8" , function() {
+
+            scope = d;
+        });
         socket.broadcast.emit('update', d);
     });
 

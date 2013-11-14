@@ -3,6 +3,25 @@
 /* Directives */
 
 
+angular.module('yawApp.directives', ['yawApp.services']).directive('users', function ($location,$rootScope,socket,util) {
+
+    return {
+        restrict: 'E',
+        scope: {
+            val: '=',
+            grouped: '='
+        },
+
+
+        link: function (scope, element, attrs) {
+
+
+        }
+    };
+
+});
+
+
 angular.module('yawApp.directives', ['yawApp.services']).directive('map', function ($location,$rootScope,socket,util) {
 
     return {
@@ -755,21 +774,21 @@ angular.module('yawApp.directives', ['yawApp.services']).directive('map', functi
                     var io = d;
 
 
-                    _.each(io.c, function(c,i) {
-                        if(c == null) {
-                            delete d.c[i];
-                        }
-                        _.each(c.selection, function(s,i) {
-                            if(s == null) {
-                                delete c.selection[i];
-                            }
-                        });
-                    });
+//                    _.each(io.c, function(c,i) {
+//                        if(c == null) {
+//                            delete d.c[i];
+//                        }
+//                        _.each(c.selection, function(s,i) {
+//                            if(s == null) {
+//                                delete c.selection[i];
+//                            }
+//                        });
+//                    });
                     scope.io = d;
 
                     $rootScope.$$phase || scope.$apply();
-                    console.log('io:updated');
-                    console.log(d);
+//                    console.log('io:updated');
+//                    console.log(d);
 
                     drawCountries();
 
@@ -941,9 +960,13 @@ angular.module('yawApp.directives', ['yawApp.services']).directive('map', functi
                 ;
 
                 function getSelection() {
-                    if(!scope.io.c[scope.client]) {
-                        scope.io.c[scope.client] = {id:scope.client, selection:{}};
-                    }
+                    if(!scope.io.c) scope.io.c = {};
+                    if(!scope.io.c[scope.client]) scope.io.c[scope.client] = {
+
+                         id:scope.client,
+                         selection:{}
+                     };
+
                     return scope.io.c[scope.client].selection;
                 }
 
@@ -959,6 +982,9 @@ angular.module('yawApp.directives', ['yawApp.services']).directive('map', functi
 
                     getSelection()[d.name] = {id: d.name};
                     scope.$apply();
+
+                    var location = d.geometry.coordinates[0][0];
+                    projection.rotate(location[0], location[1]);
 
                 }
 

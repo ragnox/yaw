@@ -20,5 +20,5 @@ block content
 
 
               div(ng-repeat="ci in c.selection" ng-animate="'animate'")
-                div(class="{{ci.id == country ? 'active' : ''}}") {{ci.id}}
+                div(class="item {{ci.id == country ? 'active' : ''}}") {{ci.id}}
 
